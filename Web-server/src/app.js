@@ -68,9 +68,11 @@ app.get('*',(req , res)=>{
         name : ' Van Ha'
     })
 })
+app.get('*',(req , res)=>{
+   res.send('404 Page')
+})
 app.listen(2000,()=>{
     console.log('Server is up on port 2000');
-    
 })
 // Đối với các ứng dụng khác, khi chạy xong task, thì node sẽ đưa ta trở lại command line để thực hiện lệnh khác.
 // Nhưng với web server thì khác, node process không bao giờ dừng lại cho đến khi ta dừng nó. Nhiệm vụ của nó khỏi động server và chạy liên tục.
