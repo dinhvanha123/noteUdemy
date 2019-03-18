@@ -1,12 +1,20 @@
 const path = require('path');
-
+const hbs = require('hbs');
 const express = require('express');
 // Thư viện express thực chất chỉ là 1 hàm, không phải là đối tượng hay gì khác,
+
+const geocode = require('./utils/geocode')
+const forecast = require('./utils/darksky')
+
+// Thiết lập đường dẫn cho hbs
+const hbsPath = path.join(__dirname,'../Templates/HandleBars')
+hbs.registerPartials(hbsPath);
 
 const app = express()
 // vì vậy, cần gán hàm express() vào biến app để chạy ứng dụng express( không cần tham số)
 
-const viewsPath = path.join(__dirname,'../Templates')
+const viewsPath = path.join(__dirname,'../Templates/Views')
+
 app.set('view engine','hbs');
 // Thiết lập view engine là hbs
 // Express mặc định sẽ tìm trong folder views để render, nếu muốn thay đổi tên folder views, ta có thẻ dùng lệnh :
@@ -27,10 +35,44 @@ app.get('/about',(req , res)=>{
 app.get('/help',(req , res)=>{
     res.render('help',{
         title : 'Help Me',
+        helpText : 'Page Help'
     })
 })
+app.get('/help/*',(req , res)=>{
+   res.render('help404',{
+       title : 'Help page 404',
+       name : 'Van Ha'
+   })
+})
+app.get('/weather',(req,res)=>{
+    if(!req.query.address){
+        return res.send({
+            error : 'You must provide an Address',
+        })
+    }
+    geocode( req.query.address, (error, { longitude, latitude, place }={})=>{
+        if(error){
+            return res.send({error})
+        }
+        forecast( longitude,latitude,(error, data)=>{
+            if(error){
+                return console.log(error);
+            }
+            res.send({
+               data,
+               place,
+               address : req.query.address,
+            })
+        })
+    
+    })
+
+})
 app.get('*',(req , res)=>{
-   res.send('404 Page')
+   res.render('all404',{
+       title : 'all page 404',
+       name : 'Van Ha Sama'
+   })
 })
 app.listen(2000,()=>{
     console.log('Server is up on port 2000');
