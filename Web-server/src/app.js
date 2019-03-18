@@ -11,6 +11,8 @@ const hbsPath = path.join(__dirname,'../Templates/HandleBars')
 hbs.registerPartials(hbsPath);
 
 const app = express()
+
+const port = process.env.PORT || 2000;
 // vì vậy, cần gán hàm express() vào biến app để chạy ứng dụng express( không cần tham số)
 
 const viewsPath = path.join(__dirname,'../Templates/Views')
@@ -74,8 +76,8 @@ app.get('*',(req , res)=>{
        name : 'Van Ha Sama'
    })
 })
-app.listen(2000,()=>{
-    console.log('Server is up on port 2000');
+app.listen(port,()=>{
+    console.log('Server is up on port',port);
 })
 // Đối với các ứng dụng khác, khi chạy xong task, thì node sẽ đưa ta trở lại command line để thực hiện lệnh khác.
 // Nhưng với web server thì khác, node process không bao giờ dừng lại cho đến khi ta dừng nó. Nhiệm vụ của nó khỏi động server và chạy liên tục.
