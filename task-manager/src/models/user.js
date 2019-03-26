@@ -1,6 +1,8 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
 const  bcrypt = require('bcrypt')
+
+const jwt = require('jsonwebtoken')
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -41,6 +43,14 @@ const userSchema = new mongoose.Schema({
     }
 })
 
+// Sử dụng Schema.method.nameMethod : chỉ có instance model mới truy cập vào được
+userSchema.methods.generateAuthToken = async function(){
+    const user = this // Từ This ở đây chính là instance model mà nó truy cập tới
+    const Token = jwt.sign({ _id : user._id.toString() },'thisisnewcourse')
+    return Token
+}
+
+// Sử dụng Schema.statics.nameMethod : chỉ có model mới truy cập vào được
 userSchema.statics.findByCredentials = async function( email , password){
         const user = await User.findOne({ email })
         if( !user ){
@@ -62,6 +72,7 @@ userSchema.pre('save', async function(next){ // Ở đây sử dụng function c
         user.password = await bcrypt.hash( user.password ,  8)
     }
     next()
+    // Nếu trong hàm pre này có từ khóa This, thì từ This này sẽ tham chiếu đến instance model
 })
 const User = mongoose.model('User', userSchema)
 

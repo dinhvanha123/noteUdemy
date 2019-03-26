@@ -30,7 +30,8 @@ Router.post('/users', async (req, res) => {
 Router.post('/users/login', async (req, res) => {
     try {
         const user = await User.findByCredentials(req.body.email, req.body.password)
-        res.send(user)
+        const Token = await user.generateAuthToken()
+        res.send({user,Token})
     } catch (error) {
         res.status(400).send({ "error" : "Cant Login" })
     }
