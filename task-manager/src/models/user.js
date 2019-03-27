@@ -40,14 +40,22 @@ const userSchema = new mongoose.Schema({
                 throw new Error('Age must be a postive number')
             }
         }
-    }
+    },
+    tokens : [{
+        token : {
+            type: String,
+            required : true
+        }
+    }]
 })
 
 // Sử dụng Schema.method.nameMethod : chỉ có instance model mới truy cập vào được
 userSchema.methods.generateAuthToken = async function(){
     const user = this // Từ This ở đây chính là instance model mà nó truy cập tới
-    const Token = jwt.sign({ _id : user._id.toString() },'thisisnewcourse')
-    return Token
+    const token = jwt.sign({ _id : user._id.toString() },'thisisnewcourse')
+    user.tokens = user.tokens.concat({ token })
+    await user.save()
+    return token
 }
 
 // Sử dụng Schema.statics.nameMethod : chỉ có model mới truy cập vào được

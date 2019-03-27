@@ -1,6 +1,7 @@
 const express = require('express');
 const Router = new express.Router();
 
+const auth = require('../middleware/auth')
 const User = require('../models/user')
 
 Router.post('/users', async (req, res) => {
@@ -8,7 +9,8 @@ Router.post('/users', async (req, res) => {
     // Bên dưới sử dụng hàm async await 
     try {
         await user.save();
-        res.status(201).send(user)
+        const token = await user.generateAuthToken()
+        res.status(201).send({ user , token})
     } catch (error) {
         res.status(400).send(error)
     }
@@ -37,7 +39,7 @@ Router.post('/users/login', async (req, res) => {
     }
 })
 
-Router.get('/users', async (req, res) => {
+Router.get('/users', auth ,async (req, res) => {
     try {
         const user = await User.find({})
         res.send(user)

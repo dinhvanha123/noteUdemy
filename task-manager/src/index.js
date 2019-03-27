@@ -11,6 +11,17 @@ const taskRouter = require('./routers/task')
 const app = express();
 
 const port = process.env.PORT || 3000 ;
+
+
+// app.use này cần phải đặt trước các Router khác để nó được chạy trước, sau đó mới tới Router khác Vd: Dùng để authenticate user
+// app.use((req, res, next)=>{
+//     if ( req.method === 'GET'){
+//             res.send('GET request is disable !!')
+//     }else{
+//         next()
+//     }
+// })
+
 app.use(express.json())
 // Ta dùng express.json() để xử lý dữ liệu Json đến được gửi từ Client cho Server.
 // Nó sẽ gắn dữ liệu Json đến vào đối tượng body của req ( req.body )
